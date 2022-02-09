@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
   const loginType = form.get("loginType");
   const username = form.get("username");
   const password = form.get("password");
-  const redirectTo = form.get("redirectTo") || "/";
+  const redirectTo = form.get("redirectTo") || "/protected";
   if (
     typeof loginType !== "string" ||
     typeof username !== "string" ||
@@ -129,6 +129,9 @@ export default function Login() {
         </label>
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <Link to="/">Back home</Link>
+      </div>
     </div>
   );
 }
