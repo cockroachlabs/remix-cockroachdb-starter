@@ -1,5 +1,5 @@
 import type { ActionFunction, LinksFunction } from "remix";
-import { json, Link, useSearchParams } from "remix";
+import { json, Link, useActionData, useSearchParams } from "remix";
 import { db } from "~/utils/db.server";
 import { createUserSession, login, register } from "~/utils/session.server";
 import stylesUrl from "~/styles/login.css";
@@ -63,7 +63,6 @@ export const action: ActionFunction = async ({ request }) => {
   switch (loginType) {
     case "login": {
       const user = await login({ username, password });
-      console.log({ user });
       if (!user) {
         return badRequest({
           fields,
@@ -101,11 +100,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Login() {
+  const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
   return (
     <div>
       <h1>Login</h1>
-      <form method="post">
+      <form
+        method="post"
+        aria-describedby={
+          actionData?.formError ? "form-error-message" : undefined
+        }
+      >
         <input
           type="hidden"
           name="redirectTo"
@@ -114,19 +119,82 @@ export default function Login() {
         <fieldset>
           <legend className="sr-only">Login or Register?</legend>
           <label>
-            <input type="radio" name="loginType" value="login" defaultChecked />{" "}
+            <input
+              type="radio"
+              name="loginType"
+              value="login"
+              defaultChecked={
+                !actionData?.fields?.loginType ||
+                actionData?.fields?.loginType === "login"
+              }
+            />{" "}
             Login
           </label>
           <label>
-            <input type="radio" name="loginType" value="register" /> Register
+            <input
+              type="radio"
+              name="loginType"
+              value="register"
+              defaultChecked={actionData?.fields?.loginType === "register"}
+            />{" "}
+            Register
           </label>
         </fieldset>
-        <label>
-          username: <input type="text" name="username" />
-        </label>
-        <label>
-          password: <input type="password" name="password" />
-        </label>
+        <div>
+          <label>
+            username:{" "}
+            <input
+              type="text"
+              name="username"
+              defaultValue={actionData?.fields?.username}
+              aria-invalid={Boolean(actionData?.fieldErrors?.username)}
+              aria-describedby={
+                actionData?.fieldErrors?.username ? "username-error" : undefined
+              }
+            />
+          </label>
+          {actionData?.fieldErrors?.username ? (
+            <p
+              className="form-validation-error"
+              role="alert"
+              id="username-error"
+            >
+              {actionData?.fieldErrors.username}
+            </p>
+          ) : null}
+        </div>
+        <div>
+          <label>
+            password:{" "}
+            <input
+              type="password"
+              name="password"
+              defaultValue={actionData?.fields?.password}
+              aria-invalid={
+                Boolean(actionData?.fieldErrors?.password) || undefined
+              }
+              aria-describedby={
+                actionData?.fieldErrors?.password ? "password-error" : undefined
+              }
+            />
+          </label>
+          {actionData?.fieldErrors?.password ? (
+            <p
+              className="form-validation-error"
+              role="alert"
+              id="password-error"
+            >
+              {actionData?.fieldErrors.password}
+            </p>
+          ) : null}
+        </div>
+        <div id="form-error-message">
+          {actionData?.formError ? (
+            <p className="form-validation-error" role="alert">
+              {actionData?.formError}
+            </p>
+          ) : null}
+        </div>
         <button type="submit">Submit</button>
       </form>
       <div>
