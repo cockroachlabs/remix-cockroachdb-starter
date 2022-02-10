@@ -1,5 +1,6 @@
 # CockroachDB Remix Starter App
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/840637aa-64ce-4af7-917a-e2b67dd5e7be/deploy-status)](https://app.netlify.com/sites/remix-cockroachdb-starter/deploys)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Overview
