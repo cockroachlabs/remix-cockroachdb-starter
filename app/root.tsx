@@ -6,7 +6,12 @@ import {
   Scripts,
   ScrollRestoration
 } from "remix";
-import type { MetaFunction } from "remix";
+import type { LinksFunction, MetaFunction } from "remix";
+import globalStylesUrl from "~/styles/global.css";
+
+export const links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: globalStylesUrl }];
+};
 
 export const meta: MetaFunction = () => {
   return { title: "CockroachDB Remix Starter" };
